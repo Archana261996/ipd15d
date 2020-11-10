@@ -176,24 +176,92 @@ T& Deque<T>::back()
 template<typename T>
 void Deque<T>::push_front(const T& value)
 {
-
+    node_ *new_node = new node_(value);
+    if(empty())
+    {
+        head_ = new_node;
+        head_ -> next = nullptr;
+        head_ -> prev = nullptr;
+        tail_ = new_node;
+        ++size_;
+        return;
+    }
+    ++size_;
+    head_->prev = new_node;
+    new_node->prev = nullptr;
+    new_node->next = head_;
+    head_ = new_node;
 }
 
-template<typename T>
+    template<typename T>
 void Deque<T>::push_back(const T& value)
 {
+    node_ *new_node = new node_(value);
+    if(empty())
+    {
+        head_ = new_node;
+        head_ -> next = nullptr;
+        head_ -> prev = nullptr;
+        tail_ = head_;
+        ++size_;
+        return;
+    }
+    ++size_;
+    tail_->next = new_node;
+    new_node->prev = tail_;
+    new_node->next = nullptr;
+    tail_ = new_node;
 
 }
 
-template<typename T>
+
+    template<typename T>
 void Deque<T>::pop_front()
-{
-}
+    {
+        if(empty())
+        {
+            return;
+        }
 
-template<typename T>
-void Deque<T>::pop_back()
-{
-}
+        if(head_ == tail_)
+        {
+            delete head_;
+            head_ = nullptr;
+            tail_ = nullptr;
+            --size_;
+            return;
+        }
+        node_ *victim = head_;
+        head_ = head_->next;
+        head_->prev = nullptr;
+        --size_;
+        delete victim;
+
+
+    }
+
+    template<typename T>
+    void Deque<T>::pop_back()
+    {
+        if(empty())
+        {
+            return;
+        }
+        if(head_ == tail_)
+        {
+            delete head_;
+            head_ = nullptr;
+            tail_ = nullptr;
+            --size_;
+            return;
+        }
+        node_ *victim = tail_;
+        tail_ = tail_->prev;
+        tail_->next = nullptr;
+        --size_;
+        delete victim;
+
+    }
 
 template<typename T>
 void Deque<T>::clear()
@@ -206,6 +274,25 @@ void Deque<T>::clear()
 template<typename T>
 void Deque<T>::splice(Deque<T>& that)
 {
+    if(that.empty())
+        return;
+
+    if(empty()) {
+        size_ = that.size_;
+        head_ = that.head_;
+        tail_ = that.tail_;
+        that.head_ = nullptr;
+        that.tail_ = nullptr;
+        that.size_ = 0;
+       // that.clear();
+        return;
+    }
+    while(!(that.empty()) && !(empty())) {
+        size_ += that.size_;
+        push_back(that.front());
+        that.clear();
+    }
+
 }
 
 template<typename T>
